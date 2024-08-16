@@ -20,7 +20,7 @@ class BaseUserSchema(BaseModel):
 class CreateUserSchema(BaseUserSchema):
     password: str
 
-    @field_validator("user_password", mode='before')
+    @field_validator("password", mode='before')
     def hash_password(cls, value) -> str:
         return generate_hash(value)
 
@@ -31,7 +31,7 @@ class UpdateUserSchema(BaseUserSchema):
     email: Optional[EmailStr] = None
     is_admin: Optional[bool] = None
 
-    @field_validator("user_password", mode='before')
+    @field_validator("password", mode='before')
     def hash_password(cls, value) -> str:
         return generate_hash(value)
 
