@@ -1,7 +1,6 @@
 from pytz import timezone
 
 from typing import Optional
-from typing import List
 
 from pydantic import EmailStr
 

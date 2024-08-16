@@ -9,9 +9,9 @@ UpdateUserBody = Body(
     description='The update user json representation.',
     examples=[
         UpdateUserSchema(
-            user_name='user_example',
-            user_password='******',
-            user_email='example@gmail.com',
+            name='user_example',
+            password='******',
+            email='example@gmail.com',
             is_admin=True
         )
     ]
@@ -23,9 +23,9 @@ CreateUserBody = Body(
     description='The create user json representation.',
     examples=[
         CreateUserSchema(
-            user_name='user_example',
-            user_password='******',
-            user_email='example@gmail.com',
+            name='user_example',
+            password='******',
+            email='example@gmail.com',
             is_admin=True
         )
     ]

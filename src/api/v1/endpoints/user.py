@@ -36,7 +36,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     if not user:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail='User info incorrect')
     
-    return JSONResponse({"acess_token": create_access_token(user.user_uuid), "token_type": "bearer"})
+    return JSONResponse({"acess_token": create_access_token(user.user_id), "token_type": "bearer"})
 
 
 @router.get("/logged", status_code=status.HTTP_200_OK, response_model=GetUserSchema)
@@ -60,19 +60,19 @@ async def get_users(db: AsyncSession = Depends(get_session)):
     return await crud.get_users_query(db)
 
 
-@router.get("/{user_uuid}", status_code=status.HTTP_200_OK, response_model=GetUserSchema)
-async def get_user(user_uuid: UUID, db: AsyncSession = Depends(get_session)):
-    response = await crud.get_user_query(user_uuid, db)
+@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=GetUserSchema)
+async def get_user(user_id: UUID, db: AsyncSession = Depends(get_session)):
+    response = await crud.get_user_query(user_id, db)
     if not response:
         raise HTTPException(status.HTTP_404_NOT_FOUND, 'User not found')
     
     return response
 
 
-@router.patch("/{user_uuid}", status_code=status.HTTP_202_ACCEPTED, response_model=GetUserSchema)
-async def update_user(user_uuid: UUID, user: UpdateUserSchema = UpdateUserBody, db: AsyncSession = Depends(get_session)):
+@router.patch("/{user_id}", status_code=status.HTTP_202_ACCEPTED, response_model=GetUserSchema)
+async def update_user(user_id: UUID, user: UpdateUserSchema = UpdateUserBody, db: AsyncSession = Depends(get_session)):
     try:
-        response = await crud.update_user_query(user_uuid, user, db)
+        response = await crud.update_user_query(user_id, user, db)
     except IntegrityError:
         raise HTTPException(status.HTTP_409_CONFLICT, 'User email conflict')
 
@@ -82,13 +82,13 @@ async def update_user(user_uuid: UUID, user: UpdateUserSchema = UpdateUserBody, 
     return response
 
 
-@router.delete("/{user_uuid}", status_code=status.HTTP_200_OK, response_model=HttpDetail)
-async def delete_user(user_uuid: UUID, db: AsyncSession = Depends(get_session)):
-    check_user = await crud.get_user_query(user_uuid, db)
+@router.delete("/{user_id}", status_code=status.HTTP_200_OK, response_model=HttpDetail)
+async def delete_user(user_id: UUID, db: AsyncSession = Depends(get_session)):
+    check_user = await crud.get_user_query(user_id, db)
     if not check_user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, 'User not found')
     
-    await crud.delete_user_query(user_uuid, db)
+    await crud.delete_user_query(user_id, db)
     
     return HttpDetail(detail= 'User deleted successfully')
 
