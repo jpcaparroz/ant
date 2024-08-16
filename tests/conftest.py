@@ -38,10 +38,10 @@ def get_id() -> uuid.UUID:
 def user_payload():
     """Generate a client payload."""
     return {
-        "user_name": fake.user_name(),
-        "user_email": fake.email(),
+        "name": fake.name(),
+        "email": fake.email(),
         "is_admin": fake.boolean(),
-        "user_password": fake.password()
+        "password": fake.password()
     }
 
 
@@ -50,16 +50,16 @@ def users_payload():
     """Generate a client payload."""
     return [
         {
-            "user_name": fake.name_male(),
-            "user_email": fake.email(),
+            "name": fake.name_male(),
+            "email": fake.email(),
             "is_admin": fake.boolean(),
-            "user_password": fake.password()
+            "password": fake.password()
         },
         {
-            "user_name": fake.name_female(),
-            "user_email": fake.company_email(),
+            "name": fake.name_female(),
+            "email": fake.company_email(),
             "is_admin": fake.boolean(),
-            "user_password": fake.password()
+            "password": fake.password()
         }
     ]
 

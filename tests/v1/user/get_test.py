@@ -22,7 +22,7 @@ async def test_get_all_users_with_one_user_happy_case(test_client, user_payload)
     assert get_response.elapsed < timedelta(seconds=2.0)
 
     # delete created user
-    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_uuid')))
+    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_id')))
     assert delete_response.status_code == 200
     assert delete_response.elapsed < timedelta(seconds=2.0)
 
@@ -39,14 +39,14 @@ def test_get_user_happy_case(test_client, user_payload):
     assert post_response.status_code == 201
 
     # fetching user   
-    get_response = test_client.get("/user/{}".format(post_response.json().get('user_uuid')))
+    get_response = test_client.get("/user/{}".format(post_response.json().get('user_id')))
     assert get_response.status_code == 200
     assert isinstance(get_response.json(), dict)
-    assert get_response.json().get('user_uuid') == post_response.json().get('user_uuid')
+    assert get_response.json().get('user_id') == post_response.json().get('user_id')
     assert get_response.elapsed < timedelta(seconds=2.0)
 
     # delete created user
-    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_uuid')))
+    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_id')))
     assert delete_response.status_code == 200
     assert delete_response.elapsed < timedelta(seconds=2.0)
 

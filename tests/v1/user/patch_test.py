@@ -17,20 +17,20 @@ async def test_update_user_happy_case(test_client, user_payload):
     assert post_response.elapsed < timedelta(seconds=2.0)
     
     # update user
-    patch_response = test_client.patch("user/{}".format(post_response.json().get('user_uuid')),
-                                       json={"user_name": "test"},)
+    patch_response = test_client.patch("user/{}".format(post_response.json().get('user_id')),
+                                       json={"name": "test"},)
     assert patch_response.status_code == 202
     assert patch_response.elapsed < timedelta(seconds=2.0)
     
     # get user updated
-    get_response = test_client.get("/user/{}".format(post_response.json().get('user_uuid')))
+    get_response = test_client.get("/user/{}".format(post_response.json().get('user_id')))
     assert get_response.status_code == 200
     assert isinstance(get_response.json(), dict)
-    assert get_response.json().get('user_name') == 'test'
+    assert get_response.json().get('name') == 'test'
     assert get_response.elapsed < timedelta(seconds=2.0)
 
     # delete created user
-    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_uuid')))
+    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_id')))
     assert delete_response.status_code == 200
     assert delete_response.elapsed < timedelta(seconds=2.0)
 

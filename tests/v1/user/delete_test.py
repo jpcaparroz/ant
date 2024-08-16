@@ -16,7 +16,7 @@ async def test_delete_user_happy_case(test_client, user_payload):
     assert post_response.status_code == 201
 
     # delete created user
-    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_uuid')))
+    delete_response = test_client.delete("user/{}".format(post_response.json().get('user_id')))
     assert delete_response.status_code == 200
     assert delete_response.elapsed < timedelta(seconds=2.0)
 
