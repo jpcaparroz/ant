@@ -75,8 +75,8 @@ To initiate API service, the archive `.env` must be fill, like below:
 <br> 
 
 ## 🔐 JWT Secret
-To ensure user password security, create a JWT by following the steps below:
-#####
+
+##### To ensure user password security, create a JWT by following the steps below:
     import secrets
 
     token: str = secrets.token_urlsafe(32)
@@ -85,8 +85,7 @@ To ensure user password security, create a JWT by following the steps below:
 
 ## 🧪 Tests
 
-To test your API on root, upload a docker using the commands:
-#####
+##### To test your API on root, upload a docker using the commands:
     .\.venv\Scripts\activate
 
 #####
@@ -99,17 +98,18 @@ _the .env server file to register environment variables if necessary._
 
 ---
 
-Or, tests through uvicorn itself:
-#####
+##### Or, tests through uvicorn itself:
     .\.venv\Scripts\activate
 
 #####
     python .\src\main.py
 
+##### And run a posgres docker
+    docker run --name app_db -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 -v postgres_data:/var/lib/postgresql/data postgres
+
 ---
 
-To run tests from the `pytest` lib
-#####
+##### To run tests from the `pytest` lib
     pytest
 
 #####
