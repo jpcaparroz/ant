@@ -6,7 +6,7 @@ from utils import get_env_fastapi_config
 from create_tables import create_tables
 
 
-app = FastAPI(title='FastAPI-Accelerator')
+app = FastAPI(title='ANT')
 app.include_router(router, prefix=settings.API_VERSION_ADDRESS)
 
 
