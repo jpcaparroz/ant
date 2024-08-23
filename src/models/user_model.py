@@ -10,6 +10,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from core.config import settings
+from models.category_model import CategoryModel
+from models.payment_model import PaymentModel
 
 
 class UserModel(settings.DBBaseModel):
@@ -20,7 +22,9 @@ class UserModel(settings.DBBaseModel):
     email = Column(String(256), nullable=False, unique=True)
     password = Column(String(256), nullable=False)
     is_admin = Column(Boolean, default=False)
+    active = Column(Boolean, nullable=False, default=True)
     created_on = Column(DateTime(timezone=True), server_default=func.now())
     updated_on = Column(DateTime(timezone=True), onupdate=func.now())
-    
-    category = relationship('category', backref='user')
+
+    category = relationship(CategoryModel, backref='user')
+    payment = relationship(PaymentModel, backref='user')

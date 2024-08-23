@@ -1,8 +1,6 @@
 from datetime import datetime
-
-from uuid import UUID
-
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 from pydantic import field_validator
@@ -15,6 +13,7 @@ class BaseUserSchema(BaseModel):
     name: str
     email: EmailStr
     is_admin: bool = False
+    active: bool = True
 
 
 class CreateUserSchema(BaseUserSchema):
@@ -30,6 +29,7 @@ class UpdateUserSchema(BaseUserSchema):
     password: Optional[str] = None
     email: Optional[EmailStr] = None
     is_admin: Optional[bool] = None
+    active: Optional[bool] = None
 
     @field_validator("password", mode='before')
     def hash_password(cls, value) -> str:

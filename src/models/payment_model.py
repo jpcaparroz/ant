@@ -12,10 +12,10 @@ from sqlalchemy.sql import func
 from core.config import settings
 
 
-class CategoryModel(settings.DBBaseModel):
-    __tablename__ = 'category'
+class PaymentModel(settings.DBBaseModel):
+    __tablename__ = 'payment'
 
-    category_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True)
+    payment_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True)
     name = Column(String(256), nullable=False)
     description = Column(String(256), nullable=False, unique=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey('user.user_id'), nullable=False)
