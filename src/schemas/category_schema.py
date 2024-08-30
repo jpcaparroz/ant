@@ -25,6 +25,7 @@ class UpdateCategorySchema(BaseCategorySchema):
 
 
 class GetCategorySchema(BaseCategorySchema):
+    category_id: UUID
     description: Optional[str] = None
     created_on: datetime
     updated_on: Optional[datetime] = None
