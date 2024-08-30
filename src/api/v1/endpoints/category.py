@@ -16,6 +16,7 @@ from schemas.category_schema import GetCategorySchema
 from schemas.category_schema import UpdateCategorySchema
 from schemas.generic_schema import HttpDetail
 from api.v1.data.crud import category_crud as crud
+from api.v1.data.crud import user_crud
 from api.v1.data.template.category_template import CreateCategorySchema
 from api.v1.data.template.category_template import UpdateCategoryBody
 
@@ -27,11 +28,15 @@ router = APIRouter()
 async def create_category(category: CreateCategorySchema = CreateCategorySchema, 
                           db: AsyncSession = Depends(get_session)):
     new_category: CategoryModel = CategoryModel(**category.model_dump())
+
+    user_search = await user_crud.get_user_query(category.user_id, db)
+    if not user_search:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, 'User not found')
+
     try:
         response = await crud.create_category_query(new_category, db)
         return response
-    
-    # Tratar erro para cadastro de categoria sem user existente
+
     except IntegrityError:
         raise HTTPException(status.HTTP_409_CONFLICT, 'Category with this name already registered')
 
