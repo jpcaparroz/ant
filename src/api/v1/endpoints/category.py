@@ -17,7 +17,7 @@ from schemas.category_schema import UpdateCategorySchema
 from schemas.generic_schema import HttpDetail
 from api.v1.data.crud import category_crud as crud
 from api.v1.data.crud import user_crud
-from api.v1.data.template.category_template import CreateCategorySchema
+from api.v1.data.template.category_template import CreateCategoryBody
 from api.v1.data.template.category_template import UpdateCategoryBody
 
 
@@ -25,7 +25,7 @@ router = APIRouter()
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, response_model=GetCategorySchema)
-async def create_category(category: CreateCategorySchema = CreateCategorySchema, 
+async def create_category(category: CreateCategorySchema = CreateCategoryBody, 
                           db: AsyncSession = Depends(get_session)):
     new_category: CategoryModel = CategoryModel(**category.model_dump())
 
@@ -64,7 +64,7 @@ async def update_category(category_id: UUID, category: UpdateCategorySchema = Up
         raise HTTPException(status.HTTP_409_CONFLICT, 'Category name conflict')
 
     if not response:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, 'Category  not found')
+        raise HTTPException(status.HTTP_404_NOT_FOUND, 'Category not found')
 
     return response
 
