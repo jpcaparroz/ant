@@ -24,9 +24,9 @@ async def get_categories_query(db: AsyncSession):
     async with db as session:
         query = select(CategoryModel)
         result = await session.execute(query)
-        categorys: List[CategoryModel] = result.scalars().unique().all()
+        categories: List[CategoryModel] = result.scalars().unique().all()
         
-    return categorys
+    return categories
 
 
 async def get_category_query(category_id: UUID, db: AsyncSession):
