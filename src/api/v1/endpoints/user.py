@@ -55,12 +55,16 @@ async def create_user(user: CreateUserSchema = CreateUserBody, db: AsyncSession 
         raise HTTPException(status.HTTP_409_CONFLICT, 'User with this email already registered')
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=List[GetUserSchema])
+@router.get("/", status_code=status.HTTP_200_OK, 
+                 response_model=List[GetUserSchema], 
+                 dependencies=[Depends(get_current_user)])
 async def get_users(db: AsyncSession = Depends(get_session)):
     return await crud.get_users_query(db)
 
 
-@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=GetUserSchema)
+@router.get("/{user_id}", status_code=status.HTTP_200_OK,
+                          response_model=GetUserSchema, 
+                          dependencies=[Depends(get_current_user)])
 async def get_user(user_id: UUID, db: AsyncSession = Depends(get_session)):
     response = await crud.get_user_query(user_id, db)
     if not response:
@@ -69,7 +73,9 @@ async def get_user(user_id: UUID, db: AsyncSession = Depends(get_session)):
     return response
 
 
-@router.patch("/{user_id}", status_code=status.HTTP_202_ACCEPTED, response_model=GetUserSchema)
+@router.patch("/{user_id}", status_code=status.HTTP_202_ACCEPTED, 
+                            response_model=GetUserSchema, 
+                            dependencies=[Depends(get_current_user)])
 async def update_user(user_id: UUID, 
                       user: UpdateUserSchema = UpdateUserBody, 
                       db: AsyncSession = Depends(get_session)):
@@ -84,7 +90,9 @@ async def update_user(user_id: UUID,
     return response
 
 
-@router.delete("/{user_id}", status_code=status.HTTP_200_OK, response_model=HttpDetail)
+@router.delete("/{user_id}", status_code=status.HTTP_200_OK, 
+                             response_model=HttpDetail, 
+                             dependencies=[Depends(get_current_user)])
 async def delete_user(user_id: UUID, db: AsyncSession = Depends(get_session)):
     check_user = await crud.get_user_query(user_id, db)
     if not check_user:

@@ -9,6 +9,7 @@ from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
+from core.deps import get_current_user
 from core.deps import get_session
 from models.payment_model import PaymentModel
 from schemas.payment_schema import CreatePaymentSchema
@@ -21,7 +22,7 @@ from api.v1.data.template.payment_template import CreatePaymentBody
 from api.v1.data.template.payment_template import UpdatePaymentBody
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, response_model=GetPaymentSchema)

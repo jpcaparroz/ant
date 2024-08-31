@@ -9,6 +9,7 @@ from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
+from core.deps import get_current_user
 from core.deps import get_session
 from models.category_model import CategoryModel
 from schemas.category_schema import CreateCategorySchema
@@ -21,11 +22,11 @@ from api.v1.data.template.category_template import CreateCategoryBody
 from api.v1.data.template.category_template import UpdateCategoryBody
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, response_model=GetCategorySchema)
-async def create_category(category: CreateCategorySchema = CreateCategoryBody, 
+async def create_category(category: CreateCategorySchema = CreateCategoryBody,
                           db: AsyncSession = Depends(get_session)):
     new_category: CategoryModel = CategoryModel(**category.model_dump())
 

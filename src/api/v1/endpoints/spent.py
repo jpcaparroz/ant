@@ -8,6 +8,7 @@ from fastapi import status
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.deps import get_current_user
 from core.deps import get_session
 from models.spent_model import SpentModel
 from schemas.spent_schema import CreateSpentSchema
@@ -22,7 +23,7 @@ from api.v1.data.template.spent_template import CreateSpentBody
 from api.v1.data.template.spent_template import UpdateSpentBody
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @router.post("/create", status_code=status.HTTP_201_CREATED, response_model=GetSpentSchema)
