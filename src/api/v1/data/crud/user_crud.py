@@ -38,7 +38,9 @@ async def get_user_query(user_id: UUID, db: AsyncSession):
     return user
 
 
-async def update_user_query(user_id: UUID, updated_user: UpdateUserSchema, db: AsyncSession):
+async def update_user_query(user_id: UUID, 
+                            updated_user: UpdateUserSchema, 
+                            db: AsyncSession):
     async with db as session:
         data = updated_user.model_dump(exclude_none=True, exclude_unset=True)        
         query = update(UserModel).where(UserModel.user_id == user_id).values(data)

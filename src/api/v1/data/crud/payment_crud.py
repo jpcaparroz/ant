@@ -39,8 +39,8 @@ async def get_payment_query(payment_id: UUID, db: AsyncSession):
 
 
 async def update_payment_query(payment_id: UUID,
-                                updated_payment: UpdatePaymentSchema, 
-                                db: AsyncSession):
+                               updated_payment: UpdatePaymentSchema, 
+                               db: AsyncSession):
     async with db as session:
         data = updated_payment.model_dump(exclude_none=True, exclude_unset=True)        
         query = update(PaymentModel).where(PaymentModel.payment_id == payment_id).values(data)
