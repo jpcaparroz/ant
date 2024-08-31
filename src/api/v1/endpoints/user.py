@@ -70,7 +70,9 @@ async def get_user(user_id: UUID, db: AsyncSession = Depends(get_session)):
 
 
 @router.patch("/{user_id}", status_code=status.HTTP_202_ACCEPTED, response_model=GetUserSchema)
-async def update_user(user_id: UUID, user: UpdateUserSchema = UpdateUserBody, db: AsyncSession = Depends(get_session)):
+async def update_user(user_id: UUID, 
+                      user: UpdateUserSchema = UpdateUserBody, 
+                      db: AsyncSession = Depends(get_session)):
     try:
         response = await crud.update_user_query(user_id, user, db)
     except IntegrityError:
