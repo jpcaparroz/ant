@@ -36,7 +36,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     if not user:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail='User info incorrect')
     
-    return JSONResponse({"acess_token": create_access_token(user.user_id), "token_type": "bearer"})
+    return JSONResponse({"access_token": create_access_token(user.user_id), "token_type": "bearer"})
 
 
 @router.get("/logged", status_code=status.HTTP_200_OK, response_model=GetUserSchema)
