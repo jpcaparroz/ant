@@ -2,6 +2,7 @@ from uuid import UUID
 from uuid import uuid4
 
 from sqlalchemy import Column
+from sqlalchemy import Date
 from sqlalchemy import String
 from sqlalchemy import SmallInteger
 from sqlalchemy import UUID
@@ -17,6 +18,7 @@ class SpentModel(settings.DBBaseModel):
     __tablename__ = 'spent'
 
     spent_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True)
+    date = Column(Date, nullable=False, unique=False)
     name = Column(String(256), nullable=False, unique=False)
     description = Column(String(256), nullable=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey('user.user_id'), nullable=False)

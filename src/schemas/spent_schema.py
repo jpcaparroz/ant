@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import date as dt
 from typing import Optional
 from uuid import UUID
 
@@ -6,6 +7,7 @@ from pydantic import BaseModel
 
 
 class BaseSpentSchema(BaseModel):
+    date: dt
     name: str
     description: str
     user_id: UUID
@@ -21,6 +23,7 @@ class CreateSpentSchema(BaseSpentSchema):
 
 
 class UpdateSpentSchema(BaseSpentSchema):
+    date: Optional[dt] = None
     name: Optional[str] = None
     description: Optional[str] = None
     user_id: Optional[UUID]
