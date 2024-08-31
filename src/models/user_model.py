@@ -12,6 +12,7 @@ from sqlalchemy.sql import func
 from core.config import settings
 from models.category_model import CategoryModel
 from models.payment_model import PaymentModel
+from models.spent_model import SpentModel
 
 
 class UserModel(settings.DBBaseModel):
@@ -28,3 +29,4 @@ class UserModel(settings.DBBaseModel):
 
     category = relationship(CategoryModel, backref='user')
     payment = relationship(PaymentModel, backref='user')
+    spent = relationship(SpentModel, backref='user')

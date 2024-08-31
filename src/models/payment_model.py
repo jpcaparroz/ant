@@ -7,9 +7,11 @@ from sqlalchemy import UUID
 from sqlalchemy import Boolean
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from core.config import settings
+from models.spent_model import SpentModel
 
 
 class PaymentModel(settings.DBBaseModel):
@@ -23,3 +25,5 @@ class PaymentModel(settings.DBBaseModel):
     active = Column(Boolean, nullable=False, default=True)
     created_on = Column(DateTime(timezone=True), server_default=func.now())
     updated_on = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    spent = relationship(SpentModel, backref='payment')
