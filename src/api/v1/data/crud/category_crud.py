@@ -29,6 +29,15 @@ async def get_categories_query(db: AsyncSession):
     return categories
 
 
+async def get_category_id_query(category_name: str, db: AsyncSession):
+    async with db as session:
+        query = select(CategoryModel).filter(CategoryModel.name == category_name)
+        result = await session.execute(query)
+        category: CategoryModel = result.scalars().unique().one_or_none()
+        
+    return category.category_id
+
+
 async def get_category_query(category_id: UUID, db: AsyncSession):
     async with db as session:
         query = select(CategoryModel).filter(CategoryModel.category_id == category_id)

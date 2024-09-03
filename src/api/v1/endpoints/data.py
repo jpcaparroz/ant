@@ -64,18 +64,41 @@ async def create_payments_from_excel(sheet_name: str,
 
 
 @router.post("/create/spent", status_code=status.HTTP_201_CREATED, 
-                                response_model=HttpDetail)
+                              response_model=HttpDetail)
 async def create_spents_from_excel(sheet_name: str, 
                                    file: UploadFile,
                                    current_user = Depends(get_current_user),
                                    db: AsyncSession = Depends(get_session)):
     df = pd.read_excel(BytesIO(await file.read()), sheet_name)
+    df.iloc[:,2] = df.iloc[:,2].fillna('')
+    
+    for index, row in df.iterrows():
+        date = row.iloc[0]
+        name = row.iloc[1]
+        description = row.iloc[2]
+        category = row.iloc[3]
+        parcel_quantity = int(row.iloc[4]) if row.iloc[4] != '-' else None
+        payment = row.iloc[5]
+        value = float(row.iloc[6])
 
-    for value in df.iloc[:, 0].dropna().values:
         try:
-            await payment_crud.create_payment_query(PaymentModel(name=value, 
-                                                                 user_id=current_user.user_id), 
-                                                    db)
+            category_id = await category_crud.get_category_id_query(category, db)
+            payment_id = await payment_crud.get_payment_id_query(payment, db)
+            
+            spent = SpentModel(
+                date= date,
+                name= name,
+                description= description,
+                user_id= current_user.user_id,
+                category_id= category_id,
+                payment_id= payment_id,
+                parcel_quantity= parcel_quantity if parcel_quantity else 0,
+                parcel_value= value / parcel_quantity if parcel_quantity else 0,
+                value= value
+            )
+
+            await spent_crud.create_spent_query(spent, db)
+            
         except Exception as e:
             raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
 

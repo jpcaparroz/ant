@@ -38,6 +38,15 @@ async def get_payment_query(payment_id: UUID, db: AsyncSession):
     return payment
 
 
+async def get_payment_id_query(payment_name: str, db: AsyncSession):
+    async with db as session:
+        query = select(PaymentModel).filter(PaymentModel.name == payment_name)
+        result = await session.execute(query)
+        payment: PaymentModel = result.scalars().unique().one_or_none()
+        
+    return payment.payment_id
+
+
 async def update_payment_query(payment_id: UUID,
                                updated_payment: UpdatePaymentSchema, 
                                db: AsyncSession):
