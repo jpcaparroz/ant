@@ -1,17 +1,19 @@
 from uuid import UUID
 from uuid import uuid4
 
+from sqlalchemy.orm import relationship
+from sqlalchemy import SmallInteger
+from sqlalchemy import ForeignKey
+from sqlalchemy import DateTime
+from sqlalchemy import String
 from sqlalchemy import Column
 from sqlalchemy import Date
-from sqlalchemy import String
-from sqlalchemy import SmallInteger
 from sqlalchemy import UUID
 from sqlalchemy import Float
-from sqlalchemy import DateTime
-from sqlalchemy import ForeignKey
 from sqlalchemy.sql import func
 
 from core.config import settings
+from models.installment_model import InstallmentModel
 
 
 class SpentModel(settings.DBBaseModel):
@@ -29,3 +31,5 @@ class SpentModel(settings.DBBaseModel):
     value = Column(Float, nullable=False)
     created_on = Column(DateTime(timezone=True), server_default=func.now())
     updated_on = Column(DateTime(timezone=True), onupdate=func.now())
+
+    installment = relationship(InstallmentModel, backref='spent')

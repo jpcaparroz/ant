@@ -73,13 +73,13 @@ async def create_spents_from_excel(sheet_name: str,
     df.iloc[:,2] = df.iloc[:,2].fillna('')
     
     for index, row in df.iterrows():
-        date = row.iloc[0]
-        name = row.iloc[1]
-        description = row.iloc[2]
-        category = row.iloc[3]
-        parcel_quantity = int(row.iloc[4]) if row.iloc[4] != '-' else None
-        payment = row.iloc[5]
-        value = float(row.iloc[6])
+        date = row.iloc[4]
+        name = row.iloc[6]
+        description = row.iloc[7]
+        category = row.iloc[8]
+        parcel_quantity = int(row.iloc[9]) if row.iloc[9] != '-' else None
+        payment = row.iloc[10]
+        value = float(row.iloc[11])
 
         try:
             category_id = await category_crud.get_category_id_query(category, db)
