@@ -18,8 +18,7 @@ class BaseSpentSchema(BaseModel):
 
 class CreateSpentSchema(BaseSpentSchema):
     description: Optional[str] = None
-    parcel_quantity: Optional[int] = None
-    parcel_value: Optional[float] = None
+    installment_quantity: Optional[int] = None
 
 
 class UpdateSpentSchema(BaseSpentSchema):
@@ -29,15 +28,15 @@ class UpdateSpentSchema(BaseSpentSchema):
     user_id: Optional[UUID]
     category_id: Optional[UUID]
     payment_id: Optional[UUID]
-    parcel_quantity: Optional[int] = None
-    parcel_value: Optional[float] = None
+    installment_quantity: Optional[int] = None
+    installment_value: Optional[float] = None
     value: Optional[float] = None
 
 
 class GetSpentSchema(BaseSpentSchema):
     spent_id: UUID
     description: Optional[str] = None
-    parcel_quantity: Optional[int] = None
-    parcel_value: Optional[float] = None
+    installment_quantity: Optional[int] = None
+    installment_value: Optional[float] = None
     created_on: datetime
     updated_on: Optional[datetime] = None

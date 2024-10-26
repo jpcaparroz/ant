@@ -7,14 +7,12 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import DateTime
 from sqlalchemy import String
 from sqlalchemy import Column
+from sqlalchemy import Float
 from sqlalchemy import Date
 from sqlalchemy import UUID
-from sqlalchemy import Float
 from sqlalchemy.sql import func
 
 from core.config import settings
-from models.installment_model import InstallmentModel
-
 
 class SpentModel(settings.DBBaseModel):
     __tablename__ = 'spent'
@@ -26,10 +24,10 @@ class SpentModel(settings.DBBaseModel):
     user_id = Column(UUID(as_uuid=True), ForeignKey('user.user_id'), nullable=False)
     category_id = Column(UUID(as_uuid=True), ForeignKey('category.category_id'), nullable=False)
     payment_id = Column(UUID(as_uuid=True), ForeignKey('payment.payment_id'), nullable=False)
-    parcel_quantity = Column(SmallInteger, nullable=True, default=0)
-    parcel_value = Column(Float, nullable=True, default=0)
+    installment_quantity = Column(SmallInteger, nullable=True, default=0)
+    installment_value = Column(Float, nullable=True, default=0)
     value = Column(Float, nullable=False)
     created_on = Column(DateTime(timezone=True), server_default=func.now())
     updated_on = Column(DateTime(timezone=True), onupdate=func.now())
 
-    installment = relationship(InstallmentModel, backref='spent')
+    installment = relationship("InstallmentModel", back_populates="spent", cascade="all, delete-orphan")

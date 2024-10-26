@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from io import BytesIO
 
 from fastapi import HTTPException
@@ -10,12 +11,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import pandas as pd
 
+from models.installment_model import InstallmentModel
 from models.category_model import CategoryModel
 from models.payment_model import PaymentModel
 from models.spent_model import SpentModel
 from schemas.generic_schema import HttpDetail
 from core.deps import get_current_user
 from core.deps import get_session
+from api.v1.data.crud import installment_crud
 from api.v1.data.crud import category_crud
 from api.v1.data.crud import payment_crud
 from api.v1.data.crud import spent_crud
@@ -77,27 +80,46 @@ async def create_spents_from_excel(sheet_name: str,
         name = row.iloc[6]
         description = row.iloc[7]
         category = row.iloc[8]
-        parcel_quantity = int(row.iloc[9]) if row.iloc[9] != '-' else None
+        installment_quantity = int(row.iloc[9]) if row.iloc[9] != '-' else None
         payment = row.iloc[10]
         value = float(row.iloc[11])
 
         try:
+            # Installment
+            installment_max: int = installment_quantity if installment_quantity > 0 else 1
+            installment_value: float = value / installment_max
+            
             category_id = await category_crud.get_category_id_query(category, db)
             payment_id = await payment_crud.get_payment_id_query(payment, db)
             
             spent = SpentModel(
-                date= date,
-                name= name,
-                description= description,
-                user_id= current_user.user_id,
-                category_id= category_id,
-                payment_id= payment_id,
-                parcel_quantity= parcel_quantity if parcel_quantity else 0,
-                parcel_value= value / parcel_quantity if parcel_quantity else 0,
-                value= value
+                date = date,
+                name = name,
+                description = description,
+                user_id = current_user.user_id,
+                category_id = category_id,
+                payment_id = payment_id,
+                installment_quantity = installment_quantity if installment_quantity else 0,
+                installment_value = value / installment_quantity if installment_quantity else 0,
+                value = value
             )
 
-            await spent_crud.create_spent_query(spent, db)
+            response = await spent_crud.create_spent_query(spent, db)
+        
+            for quantity in range(1, installment_max + 1):
+
+                new_date = date + relativedelta(months=quantity) if quantity != 1 else date
+                
+                installment = InstallmentModel(
+                    spent_id = response.spent_id,
+                    number = quantity,
+                    amount = installment_max,
+                    due_date = new_date,
+                    value = installment_value,
+                    paid = False
+                )
+            
+            await installment_crud.create_installment_query(installment, db)
             
         except Exception as e:
             raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
