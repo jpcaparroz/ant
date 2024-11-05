@@ -73,14 +73,14 @@ async def create_spents_from_excel(sheet_name: str,
                                    current_user = Depends(get_current_user),
                                    db: AsyncSession = Depends(get_session)):
     df = pd.read_excel(BytesIO(await file.read()), sheet_name)
-    df.iloc[:,2] = df.iloc[:,2].fillna('')
+    df.iloc[:, 7] = df.iloc[:, 7].fillna('')
     
     for index, row in df.iterrows():
         date = row.iloc[4]
         name = row.iloc[6]
         description = row.iloc[7]
         category = row.iloc[8]
-        installment_quantity = int(row.iloc[9]) if row.iloc[9] != '-' else None
+        installment_quantity = int(row.iloc[9]) if row.iloc[9] != '-' else 0
         payment = row.iloc[10]
         value = float(row.iloc[11])
 
@@ -118,11 +118,10 @@ async def create_spents_from_excel(sheet_name: str,
                     value = installment_value,
                     paid = False
                 )
-            
-            await installment_crud.create_installment_query(installment, db)
+                await installment_crud.create_installment_query(installment, db)
             
         except Exception as e:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     return HttpDetail(detail='Spents created successfully')
 
