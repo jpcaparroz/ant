@@ -55,7 +55,7 @@ async def create_payments_from_excel(sheet_name: str,
                                      db: AsyncSession = Depends(get_session)):
     df = pd.read_excel(BytesIO(await file.read()), sheet_name)
 
-    for value in df.iloc[:, 0].dropna().values:
+    for value in df.iloc[:, 4].dropna().values:
         try:
             await payment_crud.create_payment_query(PaymentModel(name=value, 
                                                                  user_id=current_user.user_id), 

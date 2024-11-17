@@ -16,3 +16,4 @@ distutils-strtobool==0.1.0
 python-multipart==0.0.9
 pandas==2.2.2
 openpyxl==3.1.5
+notion-client==2.2.1

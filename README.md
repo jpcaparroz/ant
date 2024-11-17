@@ -105,7 +105,7 @@ _the .env server file to register environment variables if necessary._
     python .\src\main.py
 
 ##### And run a posgres docker
-    docker run --name app_db -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 -v postgres_data:/var/lib/postgresql/data postgres
+    docker run --name ant_db -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 -v postgres_data:/var/lib/postgresql/data postgres
 
 ---
 
