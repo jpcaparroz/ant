@@ -40,3 +40,21 @@ class GetSpentSchema(BaseSpentSchema):
     installment_value: Optional[float] = None
     created_on: datetime
     updated_on: Optional[datetime] = None
+
+
+class GetTreatedSpentSchema(BaseModel):
+    date: dt
+    name: str
+    description: Optional[str] = None
+    installment_quantity: Optional[int] = None
+    installment_value: Optional[float] = None
+    value: float
+    
+    # Category join
+    category_name: Optional[str] = None
+    
+    # Payment join
+    payment_name: Optional[str] = None
+
+    class Config:
+        from_attributes = True

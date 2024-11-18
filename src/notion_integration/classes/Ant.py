@@ -5,10 +5,10 @@ import re
 from utils import get_env
 
 
-DATABASE_ID: str = get_env('NOTION_DATABASE_TIMEIT_ID')
+DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_ID')
 
 
-class Timeit():
+class Ant():
     """TimeiT notion class representation
     """
 
@@ -23,7 +23,7 @@ class Timeit():
                  value: float) -> None:
         
         self.database_id = DATABASE_ID
-        self.date = date
+        self.date = date.strftime('%Y-%m-%d')
         self.spent = spent
         self.description = description
         self.category = category
@@ -79,51 +79,30 @@ class Timeit():
                             }
                         },
                         "spent": {
-                            "rich_text": [
-                                {
-                                    "type": "text",
-                                    "text": {
-                                        "content": self.tag,
-                                        "link": None
-                                    },
-                                    "annotations": {
-                                        "bold": False,
-                                        "italic": False,
-                                        "strikethrough": False,
-                                        "underline": False,
-                                        "code": False,
-                                        "color": "default"
-                                    },
-                                    "plain_text": self.tag,
-                                    "href": None
-                                }
-                            ]
-                        },
-                        "tag": {
-                            "rich_text": [
-                                {
-                                    "type": "text",
-                                    "text": {
-                                        "content": self.tag,
-                                        "link": None
-                                    },
-                                    "annotations": {
-                                        "bold": False,
-                                        "italic": False,
-                                        "strikethrough": False,
-                                        "underline": False,
-                                        "code": False,
-                                        "color": "default"
-                                    },
-                                    "plain_text": self.tag,
-                                    "href": None
-                                }
-                            ]
-                        },
-                        "description": {
-                            "id": "description",
+                            "id": "spent",
                             "type": "title",
                             "title": [
+                                {
+                                    "type": "text",
+                                    "text": {
+                                        "content": self.spent,
+                                        "link": None
+                                    },
+                                    "annotations": {
+                                        "bold": False,
+                                        "italic": False,
+                                        "strikethrough": False,
+                                        "underline": False,
+                                        "code": False,
+                                        "color": "default",
+                                    },
+                                    "plain_text": self.spent,
+                                    "href": None,
+                                }
+                            ],
+                        },
+                        "description": {
+                            "rich_text": [
                                 {
                                     "type": "text",
                                     "text": {
@@ -136,52 +115,37 @@ class Timeit():
                                         "strikethrough": False,
                                         "underline": False,
                                         "code": False,
-                                        "color": "default",
+                                        "color": "default"
                                     },
                                     "plain_text": self.description,
-                                    "href": None,
+                                    "href": None
                                 }
-                            ],
+                            ]
                         },
-                        "project": {
+                        "category": {
                             "type": "select",
                             "select": {
-                                "name": self.project,
+                                "name": self.category,
                             }
                         },
-                        "time": {
-                            "type": "formula",
-                            "formula": {
-                                "type": "number",
-                                "number": self.time
+                        "payment": {
+                            "type": "select",
+                            "select": {
+                                "name": self.payment,
                             }
                         },
-                        "date": {
-                            "type": "date",
-                            "date": {
-                                "start": self.date,
-                                "end": None,
-                                "time_zone": None 
-                            }
+                        "installment": {
+                            "type": "number",
+                            "number": self.installment
+                        },
+                        "installment_value": {
+                            "type": "number",
+                            "number": self.installment_value
+                        },
+                        "value": {
+                            "type": "number",
+                            "number": self.value
                         }
                     }
 
         return body_json
-
-
-    def format_class(self):
-        formatted_strings = []
-
-        tag_match = re.search(r"self\.tag\s*=\s*(.*)", self)
-        description_match = re.search(r"self\.description\s*=\s*(.*)", self)
-        time_match = re.search(r"self\.time\s*=\s*(.*)", self)
-
-        if tag_match and description_match and time_match:
-            tag = tag_match.group(1).strip()
-            description = description_match.group(1).strip()
-            time = time_match.group(1).strip()
-            
-            formatted_string = f"[{tag}] {description} ({time})"
-            formatted_strings.append(formatted_string)
-
-        return ' / '.join(formatted_strings)

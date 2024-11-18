@@ -8,7 +8,10 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.spent_model import SpentModel
+from models.category_model import CategoryModel
+from models.payment_model import PaymentModel
 from schemas.spent_schema import UpdateSpentSchema
+from schemas.spent_schema import GetTreatedSpentSchema
 
 
 # Spent
@@ -58,3 +61,27 @@ async def delete_spent_query(spent_id: UUID, db: AsyncSession):
         query = delete(SpentModel).where(SpentModel.spent_id == spent_id)
         await session.execute(query)
         await session.commit()
+
+
+async def get_treated_spenties_query(db: AsyncSession) -> List[GetTreatedSpentSchema]:
+    async with db as session:
+        query = (
+            select(
+                SpentModel.date,
+                SpentModel.name,
+                SpentModel.description,
+                SpentModel.installment_quantity,
+                SpentModel.installment_value,
+                SpentModel.value,
+                CategoryModel.name.label("category_name"),
+                PaymentModel.name.label("payment_name"),
+            )
+            .join(CategoryModel, SpentModel.category_id == CategoryModel.category_id)\
+            .join(PaymentModel, SpentModel.payment_id == PaymentModel.payment_id)
+        )
+        result = await session.execute(query)
+        rows = result.mappings().all()
+
+        spenties = [GetTreatedSpentSchema(**row) for row in rows]
+
+    return spenties
