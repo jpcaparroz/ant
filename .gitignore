@@ -167,3 +167,4 @@ cython_debug/
 config.json
 db
 .vscode
+config.cfg

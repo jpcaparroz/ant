@@ -6,12 +6,12 @@ import json
 from utils import get_env, get_nested_value
 
 
-DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_ID')
+DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_INPUT_ID')
 DATE_FORMAT: str = '%Y-%m-%d'
 
 
-class Ant():
-    """Ant notion class representation
+class AntInput():
+    """AntInput notion class representation
     """
 
     def __init__(self,
@@ -69,22 +69,22 @@ class Ant():
 
 
     @classmethod
-    def from_json(cls, ant_as_json: str) -> 'Ant':
+    def from_json(cls, ant_as_json: str) -> 'AntInput':
         """ Alternative constructor
 
         :param ant_as_json: ant as JSON string
-        :return: Ant, an instance of this class
+        :return: AntInput, an instance of this class
         """
         ant_as_dict = json.loads(ant_as_json)
         return cls.from_dict(ant_as_dict)
 
 
     @classmethod
-    def from_dict(cls, ant_as_dict: Dict) -> 'Ant':
+    def from_dict(cls, ant_as_dict: Dict) -> 'AntInput':
         """ Alternative constructor
 
         :param ant_as_dict: ant as dict
-        :return: Ant, an instance of this class
+        :return: AntInput, an instance of this class
         """
         properties: dict = ant_as_dict['properties']
         treated_date = datetime.strptime(get_nested_value(properties, 'date', 'date', 'start'), DATE_FORMAT)
@@ -175,10 +175,6 @@ class Ant():
                         "installment": {
                             "type": "number",
                             "number": self.installment
-                        },
-                        "installment_value": {
-                            "type": "number",
-                            "number": self.installment_value
                         },
                         "value": {
                             "type": "number",
