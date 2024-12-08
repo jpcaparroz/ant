@@ -1,11 +1,13 @@
 from datetime import datetime
 from typing import Optional
-import re
+from typing import Dict
+import json
 
-from utils import get_env
+from utils import get_env, get_nested_value
 
 
 DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_ID')
+DATE_FORMAT: str = '%Y-%m-%d'
 
 
 class Ant():
@@ -13,6 +15,7 @@ class Ant():
     """
 
     def __init__(self,
+                 notion_id: Optional[int],
                  date: Optional[datetime],
                  spent: str,
                  description: str,
@@ -22,8 +25,9 @@ class Ant():
                  installment_value: float,
                  value: float) -> None:
         
+        self.notion_id = notion_id
         self.database_id = DATABASE_ID
-        self.date = date.strftime('%Y-%m-%d')
+        self.date = date.strftime(DATE_FORMAT)
         self.spent = spent
         self.description = description
         self.category = category
@@ -36,6 +40,7 @@ class Ant():
     def to_dict(self) -> dict:
         body_as_dict: dict = {
             'DatabaseId': self.database_id,
+            'ID': self.notion_id,
             'Date': self.date,
             'Spent': self.spent,
             'Description': self.description,
@@ -63,7 +68,40 @@ class Ant():
         return parent
 
 
-    def notion_api_json(self) -> dict:
+    @classmethod
+    def from_json(cls, ant_as_json: str) -> 'Ant':
+        """ Alternative constructor
+
+        :param ant_as_json: ant as JSON string
+        :return: Ant, an instance of this class
+        """
+        ant_as_dict = json.loads(ant_as_json)
+        return cls.from_dict(ant_as_dict)
+
+
+    @classmethod
+    def from_dict(cls, ant_as_dict: Dict) -> 'Ant':
+        """ Alternative constructor
+
+        :param ant_as_dict: ant as dict
+        :return: Ant, an instance of this class
+        """
+        properties: dict = ant_as_dict['properties']
+        treated_date = datetime.strptime(get_nested_value(properties, 'date', 'date', 'start'), DATE_FORMAT)
+        
+        return cls(
+            notion_id=get_nested_value(properties, 'id', 'unique_id', 'number'),
+            date=treated_date,
+            spent=get_nested_value(properties, 'spent', 'title', 0, 'text', 'content'),
+            description=get_nested_value(properties, 'description', 'rich_text', 0, 'text', 'content'),
+            category=get_nested_value(properties, 'category', 'select', 'name'),
+            payment=get_nested_value(properties, 'payment', 'select', 'name'),
+            installment=get_nested_value(properties, 'installment', 'number'),
+            installment_value=get_nested_value(properties, 'installment_value', 'formula', 'number'),
+            value=get_nested_value(properties, 'value', 'number'))
+    
+
+    def get_notion_json(self) -> dict:
         """Get notion expect json
 
         Returns:
