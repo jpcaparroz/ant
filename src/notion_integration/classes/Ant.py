@@ -15,26 +15,26 @@ class Ant():
     """
 
     def __init__(self,
-                 notion_id: Optional[int],
-                 date: Optional[datetime],
+                 date: datetime,
                  spent: str,
                  description: str,
                  category: str,
                  payment: str,
                  installment: int,
                  installment_value: float,
-                 value: float) -> None:
+                 value: float,
+                 notion_id: Optional[int] = None) -> None:
         
-        self.notion_id = notion_id
         self.database_id = DATABASE_ID
-        self.date = date.strftime(DATE_FORMAT)
+        self.date = date.strftime(DATE_FORMAT) if isinstance(date, datetime) else date
         self.spent = spent
-        self.description = description
+        self.description = description if description else ''
         self.category = category
         self.payment = payment
         self.installment = installment
         self.installment_value = installment_value
         self.value = value
+        self.notion_id = notion_id
 
 
     def to_dict(self) -> dict:

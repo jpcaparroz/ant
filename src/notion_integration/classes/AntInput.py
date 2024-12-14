@@ -15,17 +15,16 @@ class AntInput():
     """
 
     def __init__(self,
-                 notion_id: Optional[int],
-                 date: Optional[datetime],
+                 date: datetime,
                  spent: str,
                  description: str,
                  category: str,
                  payment: str,
                  installment: int,
                  installment_value: float,
-                 value: float) -> None:
+                 value: float,
+                 notion_id: Optional[int]) -> None:
         
-        self.notion_id = notion_id
         self.database_id = DATABASE_ID
         self.date = date.strftime(DATE_FORMAT)
         self.spent = spent
@@ -35,6 +34,7 @@ class AntInput():
         self.installment = installment
         self.installment_value = installment_value
         self.value = value
+        self.notion_id = notion_id
 
 
     def to_dict(self) -> dict:
