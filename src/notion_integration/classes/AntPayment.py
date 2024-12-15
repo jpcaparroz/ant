@@ -1,4 +1,4 @@
-from periodtime import periodtime
+from datetime import datetime
 from typing import Optional
 from typing import Dict
 import json
@@ -7,7 +7,7 @@ from utils import get_env, get_nested_value
 
 
 DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_PAYMENT_ID')
-period_FORMAT: str = '%Y-%m-%d'
+DATE_FORMAT: str = '%Y-%m-%d'
 
 
 class AntPayment():
