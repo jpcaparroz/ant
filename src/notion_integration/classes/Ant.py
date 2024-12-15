@@ -97,7 +97,7 @@ class Ant():
             category=get_nested_value(properties, 'category', 'select', 'name'),
             payment=get_nested_value(properties, 'payment', 'select', 'name'),
             installment=get_nested_value(properties, 'installment', 'number'),
-            installment_value=get_nested_value(properties, 'installment_value', 'formula', 'number'),
+            installment_value=get_nested_value(properties, 'installment_value', 'number'),
             value=get_nested_value(properties, 'value', 'number'))
     
 
