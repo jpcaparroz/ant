@@ -26,7 +26,7 @@ class Ant():
                  notion_id: Optional[int] = None) -> None:
         
         self.database_id = DATABASE_ID
-        self.date = date.strftime(DATE_FORMAT) if isinstance(date, datetime) else date
+        self.date = date if isinstance(date, datetime) else datetime.strptime(date, DATE_FORMAT)
         self.spent = spent
         self.description = description if description else ''
         self.category = category
@@ -54,7 +54,7 @@ class Ant():
         return body_as_dict
 
 
-    def get_parent(self) -> dict:
+    async def get_parent(self) -> dict:
         """Get notion parent expect json
 
         Returns:
@@ -101,7 +101,7 @@ class Ant():
             value=get_nested_value(properties, 'value', 'number'))
     
 
-    def get_notion_json(self) -> dict:
+    async def get_notion_json(self) -> dict:
         """Get notion expect json
 
         Returns:
@@ -111,7 +111,7 @@ class Ant():
                         "date": {
                             "type": "date",
                             "date": {
-                                "start": self.date,
+                                "start": self.date.strftime(DATE_FORMAT),
                                 "end": None,
                                 "time_zone": None 
                             }

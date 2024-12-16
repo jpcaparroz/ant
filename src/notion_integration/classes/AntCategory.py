@@ -5,24 +5,24 @@ import json
 from utils import get_env, get_nested_value
 
 
-DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_PAYMENT_ID')
+DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_CATEGORY_ID')
 DATE_FORMAT: str = '%Y-%m-%d'
 
 
-class AntPayment():
-    """AntPayment notion class representation
+class AntCategory():
+    """AntCategory notion class representation
     """
 
     def __init__(self,
                  period: str,
-                 payment: str,
+                 category: str,
                  spents: int,
                  value: float,
                  notion_id: Optional[int] = None) -> None:
         
         self.database_id = DATABASE_ID
         self.period = period
-        self.payment = payment
+        self.category = category
         self.spents = spents
         self.value = value
         self.notion_id = notion_id
@@ -33,7 +33,7 @@ class AntPayment():
             'DatabaseId': self.database_id,
             'ID': self.notion_id,
             'Period': self.period,
-            'Payment': self.payment,
+            'category': self.category,
             'Spents': self.spents,
             'Value': self.value
         }
@@ -56,29 +56,29 @@ class AntPayment():
 
 
     @classmethod
-    def from_json(cls, ant_payment_as_json: str) -> 'AntPayment':
+    def from_json(cls, ant_category_as_json: str) -> 'AntCategory':
         """ Alternative constructor
 
-        :param ant_payment_as_json: ant as JSON string
-        :return: AntPayment, an instance of this class
+        :param ant_category_as_json: ant as JSON string
+        :return: AntCategory, an instance of this class
         """
-        ant_payment_as_dict = json.loads(ant_payment_as_json)
-        return cls.from_dict(ant_payment_as_dict)
+        ant_category_as_dict = json.loads(ant_category_as_json)
+        return cls.from_dict(ant_category_as_dict)
 
 
     @classmethod
-    def from_dict(cls, ant_payment_as_dict: Dict) -> 'AntPayment':
+    def from_dict(cls, ant_category_as_dict: Dict) -> 'AntCategory':
         """ Alternative constructor
 
-        :param ant_payment_as_dict: ant as dict
-        :return: AntPayment, an instance of this class
+        :param ant_category_as_dict: ant as dict
+        :return: AntCategory, an instance of this class
         """
-        properties: dict = ant_payment_as_dict['properties']
+        properties: dict = ant_category_as_dict['properties']
         
         return cls(
             notion_id=get_nested_value(properties, 'id', 'unique_id', 'number'),
             period=get_nested_value(properties, 'period', 'title', 0, 'text', 'content'),
-            payment=get_nested_value(properties, 'payment', 'select', 'name'),
+            category=get_nested_value(properties, 'category', 'select', 'name'),
             spents=get_nested_value(properties, 'spents', 'number'),
             value=get_nested_value(properties, 'value', 'number'))
     
@@ -117,10 +117,10 @@ class AntPayment():
                             "type": "number",
                             "number": self.spents
                         },
-                        "payment": {
+                        "category": {
                             "type": "select",
                             "select": {
-                                "name": self.payment,
+                                "name": self.category,
                             }
                         },
                         "value": {
