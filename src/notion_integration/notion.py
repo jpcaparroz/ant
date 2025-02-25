@@ -17,6 +17,8 @@ EXPENSES_ID: str = get_env("NOTION_DATABASE_ANT_EXPENSES_ID")
 EXPENSES_INPUT_ID: str = get_env("NOTION_DATABASE_ANT_EXPENSES_INPUT_ID")
 PERIODICAL_INCOMES_ID: str = get_env("NOTION_DATABASE_ANT_PERIODICAL_INCOMES_ID")
 PERIODICAL_EXPENSES_ID: str = get_env("NOTION_DATABASE_ANT_PERIODICAL_EXPENSES_ID")
+CATEGORY_ID: str = get_env("NOTION_DATABASE_ANT_CATEGORY_ID")
+PAYMENT_ID: str = get_env("NOTION_DATABASE_ANT_PAYMENT_ID")
 
 
 class Notion:
@@ -54,6 +56,8 @@ class Notion:
             "expenses": EXPENSES_ID,
             "periodical_incomes": PERIODICAL_INCOMES_ID,
             "periodical_expenses": PERIODICAL_EXPENSES_ID,
+            "category": CATEGORY_ID,
+            "payment": PAYMENT_ID
         }
         database_id = database_mapping.get(database)
 

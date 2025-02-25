@@ -21,8 +21,8 @@ class AntExpensesInput():
                  category: str,
                  payment: str,
                  installment: int,
-                 installment_value: float,
                  value: float,
+                 installment_value: float = None,
                  notion_id: Optional[int] = None) -> None:
         
         self.database_id = DATABASE_ID
