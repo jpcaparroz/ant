@@ -1,4 +1,4 @@
 from .AntInput import AntInput
-from .Ant import Ant
+from .AntExpensesInput import AntExpensesInput
 from .AntPayment import AntPayment
 from .AntCategory import AntCategory

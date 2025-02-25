@@ -6,17 +6,17 @@ import json
 from utils import get_env, get_nested_value
 
 
-DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_ID')
+DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_EXPENSES_INPUT_ID')
 DATE_FORMAT: str = '%Y-%m-%d'
 
 
-class Ant():
-    """Ant notion class representation
+class AntExpensesInput():
+    """Expenses Input class representation
     """
 
     def __init__(self,
                  date: datetime,
-                 spent: str,
+                 name: str,
                  description: str,
                  category: str,
                  payment: str,
@@ -27,7 +27,7 @@ class Ant():
         
         self.database_id = DATABASE_ID
         self.date = date if isinstance(date, datetime) else datetime.strptime(date, DATE_FORMAT)
-        self.spent = spent
+        self.name = name
         self.description = description if description else ''
         self.category = category
         self.payment = payment
@@ -41,13 +41,13 @@ class Ant():
         body_as_dict: dict = {
             'DatabaseId': self.database_id,
             'ID': self.notion_id,
+            'Name': self.name,
             'Date': self.date,
-            'Spent': self.spent,
             'Description': self.description,
             'Category': self.category,
             'Payment': self.payment,
             'Installment': self.installment,
-            'Install_Value': self.installment_value,
+            'Installment Value': self.installment_value,
             'Value': self.value
         }
         
@@ -69,7 +69,7 @@ class Ant():
 
 
     @classmethod
-    def from_json(cls, ant_as_json: str) -> 'Ant':
+    def from_json(cls, ant_as_json: str) -> 'AntExpensesInput':
         """ Alternative constructor
 
         :param ant_as_json: ant as JSON string
@@ -80,25 +80,25 @@ class Ant():
 
 
     @classmethod
-    def from_dict(cls, ant_as_dict: Dict) -> 'Ant':
+    def from_dict(cls, ant_as_dict: Dict) -> 'AntExpensesInput':
         """ Alternative constructor
 
         :param ant_as_dict: ant as dict
         :return: Ant, an instance of this class
         """
         properties: dict = ant_as_dict['properties']
-        treated_date = datetime.strptime(get_nested_value(properties, 'date', 'date', 'start'), DATE_FORMAT)
+        treated_date = datetime.strptime(get_nested_value(properties, 'Date', 'date', 'start'), DATE_FORMAT)
         
         return cls(
             notion_id=get_nested_value(properties, 'id', 'unique_id', 'number'),
             date=treated_date,
-            spent=get_nested_value(properties, 'spent', 'title', 0, 'text', 'content'),
-            description=get_nested_value(properties, 'description', 'rich_text', 0, 'text', 'content'),
-            category=get_nested_value(properties, 'category', 'select', 'name'),
-            payment=get_nested_value(properties, 'payment', 'select', 'name'),
-            installment=get_nested_value(properties, 'installment', 'number'),
-            installment_value=get_nested_value(properties, 'installment_value', 'number'),
-            value=get_nested_value(properties, 'value', 'number'))
+            name=get_nested_value(properties, 'Name', 'title', 0, 'text', 'content'),
+            description=get_nested_value(properties, 'Description', 'rich_text', 0, 'text', 'content'),
+            category=get_nested_value(properties, 'Category', 'relation', 0, 'id'),
+            payment=get_nested_value(properties, 'Payment', 'relation', 0, 'id'),
+            installment=get_nested_value(properties, 'Installment', 'number'),
+            installment_value=get_nested_value(properties, 'Installment Value', 'formula', 'number'),
+            value=get_nested_value(properties, 'Value', 'number'))
     
 
     async def get_notion_json(self) -> dict:
@@ -108,7 +108,7 @@ class Ant():
             dict: Notion json to post a page
         """
         body_json: dict = {
-                        "date": {
+                        "Date": {
                             "type": "date",
                             "date": {
                                 "start": self.date.strftime(DATE_FORMAT),
@@ -116,14 +116,13 @@ class Ant():
                                 "time_zone": None 
                             }
                         },
-                        "spent": {
-                            "id": "spent",
+                        "Name": {
                             "type": "title",
                             "title": [
                                 {
                                     "type": "text",
                                     "text": {
-                                        "content": self.spent,
+                                        "content": self.name,
                                         "link": None
                                     },
                                     "annotations": {
@@ -134,12 +133,12 @@ class Ant():
                                         "code": False,
                                         "color": "default",
                                     },
-                                    "plain_text": self.spent,
+                                    "plain_text": self.name,
                                     "href": None,
                                 }
                             ],
                         },
-                        "description": {
+                        "Description": {
                             "rich_text": [
                                 {
                                     "type": "text",
@@ -160,23 +159,27 @@ class Ant():
                                 }
                             ]
                         },
-                        "category": {
-                            "type": "select",
-                            "select": {
-                                "name": self.category,
-                            }
+                        "Category": {
+                            "type": "relation",
+                            "relation": [
+                                {
+                                    "id": self.category,
+                                }
+                            ]
                         },
-                        "payment": {
-                            "type": "select",
-                            "select": {
-                                "name": self.payment,
-                            }
+                        "Payment": {
+                            "type": "relation",
+                            "relation": [
+                                {
+                                    "id": self.payment,
+                                }
+                            ]
                         },
-                        "installment": {
+                        "Installment": {
                             "type": "number",
                             "number": self.installment
                         },
-                        "installment_value": {
+                        "Installment Value": {
                             "type": "number",
                             "number": self.installment_value
                         },

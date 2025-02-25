@@ -1,7 +1,20 @@
-from utils import get_env_fastapi_config
+import sys
+sys.path.append("src")
+
+from datetime import datetime
+
+from notion_integration import Notion
 
 
-if __name__ == '__main__':
-    import asyncio
+async def clear() -> None:
+    # notion = Notion()
+    
+    # query = {
+    #     "and": [
+    #         {"property": "Checkbox", "checkbox": {"equals": False}},
+    #         {"property": "Clean", "checkbox": {"equals": True}},
+    #         {"property": "Date", "date": {"before": datetime.now().strftime("%Y-%m-%d")}}
+    #     ]
+    # }
 
-
+    # await notion.delete_pages(query)

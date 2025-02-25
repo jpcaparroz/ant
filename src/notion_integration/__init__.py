@@ -1,1 +1,1 @@
-from .AntNotion import AntNotion
+from .notion import Notion
