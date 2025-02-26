@@ -191,6 +191,7 @@ class Notion:
                 await self.async_client.pages.create(
                     parent=await expense.get_parent(),
                     properties=await expense.get_notion_json(),
+                    icon=await expense.get_icon()
                 )
             except Exception as e:
                 print(f"Error processing page {expense.name}: {str(e)}")

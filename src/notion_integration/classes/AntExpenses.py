@@ -100,6 +100,21 @@ class AntExpenses():
             value=get_nested_value(properties, 'Value', 'number'))
     
 
+    async def get_icon(self) -> dict:
+        """Get notion icon dict
+
+        Returns:
+            dict: Notion json icon
+        """
+        body_json: dict = {
+            "type": "external",
+            "external": {
+                "url": "https://www.notion.so/icons/share_gray.svg"
+            }
+        }
+
+        return body_json
+
     async def get_notion_json(self) -> dict:
         """Get notion expect json
 
@@ -138,6 +153,7 @@ class AntExpenses():
                             ],
                         },
                         "Description": {
+                            "type": "rich_text",
                             "rich_text": [
                                 {
                                     "type": "text",
@@ -182,7 +198,7 @@ class AntExpenses():
                             "type": "number",
                             "number": self.installment_value
                         },
-                        "value": {
+                        "Value": {
                             "type": "number",
                             "number": self.value
                         }

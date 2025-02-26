@@ -139,6 +139,7 @@ class AntExpensesInput():
                             ],
                         },
                         "Description": {
+                            "type": "rich_text",
                             "rich_text": [
                                 {
                                     "type": "text",
@@ -183,7 +184,7 @@ class AntExpensesInput():
                             "type": "number",
                             "number": self.installment_value
                         },
-                        "value": {
+                        "Value": {
                             "type": "number",
                             "number": self.value
                         }
