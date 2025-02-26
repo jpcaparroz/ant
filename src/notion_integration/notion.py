@@ -1,13 +1,11 @@
 from collections import defaultdict
-import asyncio
-from asyncio import gather
-from typing import Literal
-from typing import List
+from asyncio import gather, sleep
+from typing import Literal,List
 
 from notion_client import AsyncClient, Client
 
 from src.utils import get_env
-from src.notion_integration.classes import AntExpensesInput, AntInput, AntPayment, AntCategory
+from src.notion_integration.classes import AntExpensesInput, AntExpenses
 
 
 API_KEY: str = get_env("NOTION_API_TOKEN")
@@ -149,21 +147,25 @@ class Notion:
         tasks = [parallel_process(page_id) for page_id in page_ids]
         await gather(*tasks)
 
-    async def update_ant(self) -> None:
+
+    async def update_expenses(self) -> None:
+        """ Update expenses from input
+        """
+
         async def parallel_process(page_id: str):
             try:
-                ant_input = AntInput.from_dict(
+                expenses_input = AntExpenses.from_dict(
                     await self.async_client.pages.retrieve(page_id)
                 )
-                ant = Ant(
-                    date=ant_input.date,
-                    spent=ant_input.spent,
-                    description=ant_input.description,
-                    category=ant_input.category,
-                    payment=ant_input.payment,
-                    installment=ant_input.installment,
-                    installment_value=ant_input.installment_value,
-                    value=ant_input.value,
+                ant = AntExpenses(
+                    date=expenses_input.date,
+                    spent=expenses_input.spent,
+                    description=expenses_input.description,
+                    category=expenses_input.category,
+                    payment=expenses_input.payment,
+                    installment=expenses_input.installment,
+                    installment_value=expenses_input.installment_value,
+                    value=expenses_input.value,
                 )
                 await self.async_client.pages.create(
                     parent=await ant.get_parent(),
@@ -172,96 +174,28 @@ class Notion:
             except Exception as e:
                 print(f"Error processing page {page_id}: {e}")
 
-        page_ids = await self.get_notion_database_page_ids("ant_input")
+        page_ids = await self.get_notion_database_page_ids("expenses_input")
         for i in range(0, len(page_ids), 3):  # Processa 3 por vez
             tasks = [parallel_process(page_id) for page_id in page_ids[i : i + 3]]
-            await asyncio.gather(*tasks)
-            await asyncio.sleep(1)  # Aguarda 1 segundo entre os lotes
+            await gather(*tasks)
+            await sleep(1)  # Aguarda 1 segundo entre os lotes
 
         # await self.delete_pages('ant_input')
 
-    async def update_ant_payment(self) -> None:
-        async def parallel_process(payment: str, page_ids: list):
+    async def update_expenses_temp(self, expenses: list) -> None:
+        """ Update expenses from input temporary
+        """
+
+        async def parallel_process(expense: AntExpenses):
             try:
-                monthly_ants = defaultdict(list)
-                final_value_per_month = defaultdict(float)
-                count_per_month = defaultdict(int)
+                await self.async_client.pages.create(
+                    parent=await expense.get_parent(),
+                    properties=await expense.get_notion_json(),
+                )
+            except Exception as e:
+                print(f"Error processing page {expense.name}: {str(e)}")
 
-                for page_id in page_ids:
-                    ant: Ant = Ant.from_dict(
-                        await self.async_client.pages.retrieve(page_id)
-                    )
-                    month_key = ant.date.strftime("%Y-%m")
-
-                    monthly_ants[month_key].append(ant)
-                    final_value_per_month[month_key] += ant.value
-                    count_per_month[month_key] += 1
-
-                for month, ants in monthly_ants.items():
-                    ant_payment = AntPayment(
-                        period=month,
-                        payment=payment,
-                        spents=count_per_month[month],
-                        value=round(final_value_per_month[month], 2),
-                    )
-                    await self.async_client.pages.create(
-                        parent=await ant_payment.get_parent(),
-                        properties=await ant_payment.get_notion_json(),
-                    )
-            except Exception:
-                raise
-
-        payment_page_ids: dict = {}
-        payment_names: list = await self.get_database_select_options("ant", "payment")
-        for payment in payment_names:
-            query: dict = {"property": "payment", "select": {"equals": payment}}
-            page_ids = await self.get_notion_database_page_ids("ant", query)
-            payment_page_ids[payment] = page_ids
-
-        tasks: list = [
-            parallel_process(key, value) for key, value in payment_page_ids.items()
-        ]
-        await gather(*tasks)
-
-    async def update_ant_category(self) -> None:
-        async def parallel_process(category: str, page_ids: list):
-            try:
-                monthly_ants = defaultdict(list)
-                final_value_per_month = defaultdict(float)
-                count_per_month = defaultdict(int)
-
-                for page_id in page_ids:
-                    ant: Ant = Ant.from_dict(
-                        await self.async_client.pages.retrieve(page_id)
-                    )
-                    month_key = ant.date.strftime("%Y-%m")
-
-                    monthly_ants[month_key].append(ant)
-                    final_value_per_month[month_key] += ant.value
-                    count_per_month[month_key] += 1
-
-                for month, ants in monthly_ants.items():
-                    ant_category = AntCategory(
-                        period=month,
-                        category=category,
-                        spents=count_per_month[month],
-                        value=round(final_value_per_month[month], 2),
-                    )
-                    await self.async_client.pages.create(
-                        parent=await ant_category.get_parent(),
-                        properties=await ant_category.get_notion_json(),
-                    )
-            except Exception:
-                raise
-
-        category_page_ids: dict = {}
-        category_names: list = await self.get_database_select_options("ant", "category")
-        for category in category_names:
-            query: dict = {"property": "category", "select": {"equals": category}}
-            page_ids = await self.get_notion_database_page_ids("ant", query)
-            category_page_ids[category] = page_ids
-
-        tasks: list = [
-            parallel_process(key, value) for key, value in category_page_ids.items()
-        ]
-        await gather(*tasks)
+        for i in range(0, len(expenses), 3):  # Processa 3 por vez
+            tasks = [parallel_process(expense) for expense in expenses[i : i + 3]]
+            await gather(*tasks)
+            await sleep(1)  # Aguarda 1 segundo entre os lotes
