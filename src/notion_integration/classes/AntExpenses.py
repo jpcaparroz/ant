@@ -96,7 +96,6 @@ class AntExpenses():
             category=get_nested_value(properties, 'Category', 'relation', 0, 'id'),
             payment=get_nested_value(properties, 'Payment', 'relation', 0, 'id'),
             installment=get_nested_value(properties, 'Installment', 'number'),
-            installment_value=get_nested_value(properties, 'Installment Value', 'number'),
             value=get_nested_value(properties, 'Value', 'number'))
     
 
@@ -193,10 +192,6 @@ class AntExpenses():
                         "Installment": {
                             "type": "number",
                             "number": self.installment
-                        },
-                        "Installment Value": {
-                            "type": "number",
-                            "number": self.installment_value
                         },
                         "Value": {
                             "type": "number",

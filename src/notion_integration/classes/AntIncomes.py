@@ -1,17 +1,16 @@
 from datetime import datetime
-from typing import Optional
-from typing import Dict
+from typing import Optional, Dict
 import json
 
 from utils import get_env, get_nested_value
 
 
-DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_EXPENSES_INPUT_ID')
+DATABASE_ID: str = get_env('NOTION_DATABASE_ANT_INCOMES_ID')
 DATE_FORMAT: str = '%Y-%m-%d'
 
 
-class AntExpensesInput():
-    """Expenses Input class representation
+class AntIncomes():
+    """Incomes class representation
     """
 
     def __init__(self,
@@ -20,9 +19,7 @@ class AntExpensesInput():
                  description: str,
                  category: str,
                  payment: str,
-                 installment: int,
                  value: float,
-                 installment_value: float = None,
                  notion_id: Optional[int] = None) -> None:
         
         self.database_id = DATABASE_ID
@@ -31,8 +28,6 @@ class AntExpensesInput():
         self.description = description if description else ''
         self.category = category
         self.payment = payment
-        self.installment = installment
-        self.installment_value = installment_value
         self.value = value
         self.notion_id = notion_id
 
@@ -46,8 +41,6 @@ class AntExpensesInput():
             'Description': self.description,
             'Category': self.category,
             'Payment': self.payment,
-            'Installment': self.installment,
-            'Installment Value': self.installment_value,
             'Value': self.value
         }
         
@@ -69,7 +62,7 @@ class AntExpensesInput():
 
 
     @classmethod
-    def from_json(cls, ant_as_json: str) -> 'AntExpensesInput':
+    def from_json(cls, ant_as_json: str) -> 'AntIncomes':
         """ Alternative constructor
 
         :param ant_as_json: ant as JSON string
@@ -80,7 +73,7 @@ class AntExpensesInput():
 
 
     @classmethod
-    def from_dict(cls, ant_as_dict: Dict) -> 'AntExpensesInput':
+    def from_dict(cls, ant_as_dict: Dict) -> 'AntIncomes':
         """ Alternative constructor
 
         :param ant_as_dict: ant as dict
@@ -96,10 +89,23 @@ class AntExpensesInput():
             description=get_nested_value(properties, 'Description', 'rich_text', 0, 'text', 'content'),
             category=get_nested_value(properties, 'Category', 'relation', 0, 'id'),
             payment=get_nested_value(properties, 'Payment', 'relation', 0, 'id'),
-            installment=get_nested_value(properties, 'Installment', 'number'),
-            installment_value=get_nested_value(properties, 'Installment Value', 'formula', 'number'),
             value=get_nested_value(properties, 'Value', 'number'))
     
+
+    async def get_icon(self) -> dict:
+        """Get notion icon dict
+
+        Returns:
+            dict: Notion json icon
+        """
+        body_json: dict = {
+            "type": "external",
+            "external": {
+                "url": "https://www.notion.so/icons/save_gray.svg"
+            }
+        }
+
+        return body_json
 
     async def get_notion_json(self) -> dict:
         """Get notion expect json
@@ -175,10 +181,6 @@ class AntExpensesInput():
                                     "id": self.payment,
                                 }
                             ]
-                        },
-                        "Installment": {
-                            "type": "number",
-                            "number": self.installment
                         },
                         "Value": {
                             "type": "number",
