@@ -173,7 +173,7 @@ class Notion:
                         description=incomes_input.description,
                         category=incomes_input.category,
                         payment=incomes_input.payment,
-                        value=incomes_input.value
+                        value=incomes_input.value,
                     )
 
                     await self.async_client.pages.create(
@@ -193,22 +193,3 @@ class Notion:
         await gather(*tasks)
 
         await self.delete_pages("incomes_input")
-
-    async def update_incomes_temp(self, incomes: list) -> None:
-        """Update incomes from input temporary"""
-
-        async def parallel_process(income: AntIncomes, semaphore: Semaphore):
-            async with semaphore:
-                try:
-                    await self.async_client.pages.create(
-                        parent=await income.get_parent(),
-                        properties=await income.get_notion_json(),
-                        icon=await income.get_icon(),
-                    )
-                except Exception as e:
-                    print(f"Error processing page {income.name}: {str(e)}")
-
-        semaphore = Semaphore(5)
-
-        tasks = [parallel_process(income, semaphore) for income in incomes]
-        await gather(*tasks)

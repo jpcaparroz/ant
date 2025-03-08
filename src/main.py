@@ -1,10 +1,7 @@
 import sys
 sys.path.append("src")
 
-from datetime import datetime
-
 from notion_integration import Notion
-
 
 async def clear() -> None:
     # notion = Notion()
@@ -18,3 +15,14 @@ async def clear() -> None:
     # }
 
     # await notion.delete_pages(query)
+    return
+
+async def update_expenses() -> None:
+    notion = Notion()
+    await notion.update_expenses()
+
+async def update_incomes() -> None:
+    notion = Notion()
+    await notion.update_incomes()
+
+
