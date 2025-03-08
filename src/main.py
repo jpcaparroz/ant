@@ -1,19 +1,28 @@
-from fastapi import FastAPI
+import sys
+sys.path.append("src")
 
-from core.config import settings
-from api.v1.api import router
-from utils import get_env_fastapi_config
-from create_tables import create_tables
+from notion_integration import Notion
 
+async def clear() -> None:
+    # notion = Notion()
+    
+    # query = {
+    #     "and": [
+    #         {"property": "Checkbox", "checkbox": {"equals": False}},
+    #         {"property": "Clean", "checkbox": {"equals": True}},
+    #         {"property": "Date", "date": {"before": datetime.now().strftime("%Y-%m-%d")}}
+    #     ]
+    # }
 
-app = FastAPI(title='FastAPI-Accelerator')
-app.include_router(router, prefix=settings.API_VERSION_ADDRESS)
+    # await notion.delete_pages(query)
+    return
 
+async def update_expenses() -> None:
+    notion = Notion()
+    await notion.update_expenses()
 
-if __name__ == '__main__':
-    import uvicorn
-    import asyncio
+async def update_incomes() -> None:
+    notion = Notion()
+    await notion.update_incomes()
 
-    asyncio.run(create_tables())
-    uvicorn.run(**get_env_fastapi_config())
 
