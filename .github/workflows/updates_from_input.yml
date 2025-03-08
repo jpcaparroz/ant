@@ -1,4 +1,4 @@
-name: Update Expenses Job
+name: Update Incomes and Expenses Job
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # Permite rodar manualmente pelo GitHub Actions
 
 jobs:
-  clear-notion:
+  update-incomes-and-expenses:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,20 @@ jobs:
           python-version: "3.12"
 
       - name: Install requirements
-        run: pip install -r .\docs\requirements.txt
+        run: pip install -r ./docs/requirements.txt
+
+      - name: Run Notion Update Incomes
+        env:
+          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
+          NOTION_DATABASE_ANT_INCOMES_INPUT_ID: ${{ secrets.NOTION_DATABASE_ANT_INCOMES_INPUT_ID }}
+          NOTION_DATABASE_ANT_EXPENSES_INPUT_ID: ${{ secrets.NOTION_DATABASE_ANT_EXPENSES_INPUT_ID }}
+          NOTION_DATABASE_ANT_INCOMES_ID: ${{ secrets.NOTION_DATABASE_ANT_INCOMES_ID }}
+          NOTION_DATABASE_ANT_EXPENSES_ID: ${{ secrets.NOTION_DATABASE_ANT_EXPENSES_ID }}
+          NOTION_DATABASE_ANT_PERIODICAL_INCOMES_ID: ${{ secrets.NOTION_DATABASE_ANT_PERIODICAL_INCOMES_ID }}
+          NOTION_DATABASE_ANT_PERIODICAL_EXPENSES_ID: ${{ secrets.NOTION_DATABASE_ANT_PERIODICAL_EXPENSES_ID }}
+          NOTION_DATABASE_ANT_CATEGORY_ID: ${{ secrets.NOTION_DATABASE_ANT_CATEGORY_ID }}
+          NOTION_DATABASE_ANT_PAYMENT_ID: ${{ secrets.NOTION_DATABASE_ANT_PAYMENT_ID }}
+        run: python -c "import asyncio; from src.main import update_incomes; asyncio.run(update_incomes())"
 
       - name: Run Notion Update Expenses
         env:
@@ -33,3 +46,4 @@ jobs:
           NOTION_DATABASE_ANT_CATEGORY_ID: ${{ secrets.NOTION_DATABASE_ANT_CATEGORY_ID }}
           NOTION_DATABASE_ANT_PAYMENT_ID: ${{ secrets.NOTION_DATABASE_ANT_PAYMENT_ID }}
         run: python -c "import asyncio; from src.main import update_expenses; asyncio.run(update_expenses())"
+
