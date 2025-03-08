@@ -113,13 +113,16 @@ class Notion:
                     print(f"Error archiving page {page_id}: {e}")
 
         page_ids: list = await self.get_notion_database_page_ids(database)
-        if not page_ids:
-            raise Exception("Pages not found")
 
-        semaphore = Semaphore(5)
+        if page_ids:
+            semaphore = Semaphore(5)
 
-        tasks = [parallel_process(page_id, semaphore) for page_id in page_ids]
-        await gather(*tasks)
+            tasks = [parallel_process(page_id, semaphore) for page_id in page_ids]
+            await gather(*tasks)
+        
+        else:
+            print("Pages not found")
+
 
     async def update_expenses(self) -> None:
         """Update expenses from input"""
