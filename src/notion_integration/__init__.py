@@ -1,1 +1,1 @@
-from .notion import Notion
+from .notion import *

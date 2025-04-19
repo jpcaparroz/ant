@@ -1,5 +1,4 @@
-from asyncio import gather, sleep, Semaphore
-from typing import Literal
+from asyncio import gather, Semaphore
 from enum import Enum
 
 from notion_client import AsyncClient, Client
@@ -34,7 +33,7 @@ class DatabaseType(Enum):
 
 
 class Notion:
-    """Notion notion class representation"""
+    """Notion class representation"""
 
     def __init__(self) -> None:
         self.client = Client(auth=API_KEY)
